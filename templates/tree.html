@@ -188,23 +188,120 @@ function toggleGoal(nodeValue, path) {
 
 <style>
 /* Existing Styles */
-.tree { width: 100%; height: auto; text-align: center; }
-.tree ul { padding-top: 20px; position: relative; transition: .5s; }
-.tree li { display: inline-table; text-align: center; list-style-type: none; position: relative; padding: 10px; transition: .5s; }
-.tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 1px solid #ccc; width: 51%; height: 10px; }
-.tree li::after { right:auto; left:50%; border-left:1px solid #ccc; }
-.tree li.single-node::after, .tree li.single-node::before { display:none; }
-.tree li.single-node { padding-top:0; }
-.tree li.root::before, .tree li.root::after { border:0 none; }
-.tree li.last-node::before { border-right:1px solid #ccc; border-radius:0 5px 0 0; }
-.tree li.first-node::after { border-radius:5px 0 0 0; }
-.tree ul ul::before { content:''; position:absolute; top:0; left:50%; border-left:1px solid #ccc; width:0; height:20px; }
-.tree li a { border:1px solid #ccc; padding:10px; display:inline-grid; border-radius:5px; text-decoration:none; transition:.5s; background: white;}
-.tree li a span { border:1px solid #ccc; border-radius:5px; color:#666; padding:8px; font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight:500; }
-.tree li a:hover, .tree li a:hover i, .tree li a:hover span, .tree li a:hover+ul li a { background:#c8e4f8; color:#000; border:1px solid #94a0b4; }
-.tree li a:hover+ul li::after, .tree li a:hover+ul li::before, .tree li a:hover+ul::before, .tree li a:hover+ul ul::before { border-color:#94a0b4; }
+.tree { 
+    width: 100%; 
+    height: auto; 
+    text-align: center; 
+}
+.tree ul { 
+    padding-top: 20px; 
+    position: relative; 
+    transition: .5s; 
+}
+.tree li { 
+    display: inline-table; 
+    text-align: center; 
+    list-style-type: none; 
+    position: relative; 
+    padding: 10px; 
+    transition: .5s; 
+}
 
-/* COMPLETED NODE STYLES */
+
+.tree li::before, 
+.tree li::after { 
+    content: ''; 
+    position: absolute; 
+    top: 0; 
+    width: 50%; 
+    height: 10px; 
+    border-top: 1px solid #ccc; 
+}
+
+.tree li::before { 
+    right: 50%; 
+    border-right: 1px solid #ccc; 
+}
+
+
+.tree li::after { 
+    left: 50%; 
+    border-left: 1px solid #ccc; 
+}
+
+
+.tree li.root::before, 
+.tree li.root::after { 
+    border: 0 none; 
+}
+
+
+.tree li:first-child::before,
+.tree li.first-node::before { 
+    border: 0 none; 
+}
+
+
+.tree li:last-child::after,
+.tree li.last-node::after { 
+    border: 0 none; 
+}
+
+
+.tree li.single-node::before, 
+.tree li.single-node::after { 
+    border-top: 0;   
+    height: 0;       
+    display: block;  
+}
+
+.tree ul ul::before { 
+    content: ''; 
+    position: absolute; 
+    top: 0; 
+    left: 50%; 
+    border-left: 1px solid #ccc; 
+    width: 0; 
+    height: 20px; 
+}
+
+.tree li a { 
+    border:1px solid #ccc; 
+    padding:10px; 
+    display:inline-grid; 
+    border-radius:5px; 
+    text-decoration:none; 
+    transition:.5s; 
+    background: white;
+}
+
+.tree li a span { 
+    border:1px solid #ccc; 
+    border-radius:5px; 
+    color:#666; 
+    padding:8px; 
+    font-size:12px; 
+    text-transform:uppercase; 
+    letter-spacing:1px; 
+    font-weight:500; 
+}
+
+.tree li a:hover, 
+.tree li a:hover i, 
+.tree li a:hover span, 
+.tree li a:hover+ul li a { 
+    background:#c8e4f8; 
+    color:#000; 
+    border:1px solid #94a0b4; 
+}
+.tree li a:hover+ul li::after, 
+.tree li a:hover+ul li::before, 
+.tree li a:hover+ul::before, 
+.tree li a:hover+ul ul::before { 
+    border-color:#94a0b4; 
+}
+
+/* Completed nodes */
 .tree li a.completed-node {
     border: 2px solid #28a745 !important;
     background-color: #d4edda !important;
@@ -215,6 +312,7 @@ function toggleGoal(nodeValue, path) {
     color: #155724 !important;
     font-weight: bold;
 }
+
 
 /* MODAL STYLES */
 .modal-overlay {
@@ -237,3 +335,4 @@ function toggleGoal(nodeValue, path) {
 }
 </style>
 {% endblock %}
+
