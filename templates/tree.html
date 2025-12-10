@@ -1,149 +1,239 @@
-import random
-import string
+{% extends "base.html" %}
+{% block title %}Goal Tracker{% endblock %}
 
-class Node:
-    """A node in a binary tree."""
-    def __init__(self, value, left=None, right=None):
-        self.value = value
-        self.left = left
-        self.right = right
-        self.completed = False  # checkbox state
+{% block content %}
+<section class="goal-tracker-outer" style="margin: 30px;">
+  <div class="goal-tracker-container" style="display:flex; gap:20px;">
 
-class BinaryTree:
-    """A binary tree data structure."""
-    def __init__(self, root_value=None):
-        self.root = Node(root_value) if root_value is not None else None
+    <div class="courses-panel" style="flex:1; max-width:250px; padding:15px; border:1px solid #ccc; border-radius:10px; background:#f9f9f9;">
+      <h3>Courses</h3>
+      <form method="POST" id="courseForm">
+        {% for course in courses %}
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+          <button type="submit" name="course" value="{{ course }}" style="flex:1; padding:8px; {% if course==selected_course %}background:#d4edda;{% else %}background:#f0f0f0;{% endif %}; border: none;">
+            {{ course }}
+          </button>
+          <button type="button" onclick="confirmDelete('{{ course }}')" style="background:#f1c7e1; padding:5px 8px; border:none; border-radius:4px; color:white;">X</button>
+        </div>
+        {% endfor %}
+        <input type="hidden" id="delete_course_input" name="delete_course">
+        <button type="submit" name="create_custom" value="1" style="width:100%; margin-top:8px; padding:8px; background:lab(86.22% -3.02 73.29); border-radius:4px;">Create Custom Goals</button>
+      </form>
+    </div>
 
-    def insert_left(self, current_node, value):
-        """Insert a node as the left child of the current node."""
-        if current_node.left is None:
-            current_node.left = Node(value)
-        else:
-            new_node = Node(value, left=current_node.left)
-            current_node.left = new_node
+    <div class="tree-panel" style="flex:3; height:600px; padding:20px; border:1px solid #ccc; border-radius:10px; background:#fff; overflow:auto; text-align:center;">
+      <h3>Goal Tree: {{ selected_course }}</h3>
+      
+      <p id="result-container-text" style="color:green; font-weight:bold; min-height: 24px;">
+        {{ result or request.args.get('result') }}
+      </p>
 
-    def insert_right(self, current_node, value):
-        """Insert a node as the right child of the current node."""
-        if current_node.right is None:
-            current_node.right = Node(value)
-        else:
-            new_node = Node(value, right=current_node.right)
-            current_node.right = new_node
+      {% if tree_html %}
+      <div class="tree">
+        {{ tree_html | safe }}
+      </div>
+      {% else %}
+      <p>No goal tree available for this course.</p>
+      {% endif %}
+    </div>
 
-    # traversal methods unchanged
-    def preorder_traversal(self, start, traversal=""):
-        if start:
-            traversal += str(start.value) + " "
-            traversal = self.preorder_traversal(start.left, traversal)
-            traversal = self.preorder_traversal(start.right, traversal)
-        return traversal.strip()
+    {% if show_custom_panel %}
+    <div class="custom-goal-panel" style="flex:1; padding:20px; border:1px solid #ccc; border-radius:10px; background:#fff;">
+      <h3>Create / Insert Node</h3>
+        <form method="POST" style="margin-bottom:12px;">
+        <label>Course Title (Sidebar Name):</label>
+        <input type="text" name="root_goal" style="width:100%; padding:8px; margin-bottom:8px;" required>
+        <label>Top Goal (Root Node):</label>
+        <input type="text" name="child_goal" style="width:100%; padding:8px; margin-bottom:8px;" required>
+        <button type="submit" name="save_custom_tree" value="1" style="width:100%; padding:10px; background:#d4edda; border:none; border-radius:6px;">Save Tree</button>
+      </form>
 
-    def inorder_traversal(self, start, traversal=""):
-        if start:
-            traversal = self.inorder_traversal(start.left, traversal)
-            traversal += str(start.value) + " "
-            traversal = self.inorder_traversal(start.right, traversal)
-        return traversal.strip()
+      <hr>
+      <h4>Insert node under existing node</h4>
+      <form method="POST">
+        <label>Parent node:</label>
+        <select name="parent_path" id="parentSelect" style="width:100%; padding:8px; margin-bottom:8px;">
+          {% for val, path, sides in nodes_with_paths %}
+            <option value="{{ path }}" data-sides="{{ sides|join(',') }}">{{ val }} {% if path=='' %}(root){% endif %}</option>
+          {% endfor %}
+        </select>
+        <label>Side:</label>
+        <select name="side" id="sideSelect" style="width:100%; padding:8px; margin-bottom:8px;">
+          <option value="L">Left</option>
+          <option value="R">Right</option>
+        </select>
+        <label>New node value:</label>
+        <input type="text" name="new_value" style="width:100%; padding:8px; margin-bottom:8px;">
+        <button type="submit" style="width:100%; padding:10px; background:#e2e8f0; border:none; border-radius:6px;">Insert Node</button>
+      </form>
 
-    def postorder_traversal(self, start, traversal=""):
-        if start:
-            traversal = self.postorder_traversal(start.left, traversal)
-            traversal = self.postorder_traversal(start.right, traversal)
-            traversal += str(start.value) + " "
-        return traversal.strip()
+      <form method="POST" style="margin-top:15px;">
+        <button type="submit" name="finish_custom" value="1" style="width:100%; padding:10px; background:#a0e8a0; border:none; border-radius:6px;">DONE</button>
+      </form>
+    </div>
+    {% endif %}
 
-    def search(self, root, key):
-        """Return True if node exists, False otherwise."""
-        nodes = self.inorder_traversal(root).split()
-        return key in nodes
+  </div>
+</section>
 
-    def delete(self, root, key):
-        """Delete a node using BFS (level-order delete). Return message."""
-        if root is None:
-            return "No tree exists."
+<div id="deleteModal" class="modal-overlay" style="display:none;">
+  <div style="background:white; padding:20px; border-radius:10px; width:300px; text-align:center;">
+    <h3>Delete Course?</h3>
+    <p>This action cannot be undone.</p>
+    <div style="display:flex; justify-content:space-between; margin-top:20px;">
+      <button onclick="closeModal()" style="padding:8px 15px; background:#ccc; border:none; border-radius:6px;">Cancel</button>
+      <button onclick="submitDelete()" style="padding:8px 15px; background:#ff6b6b; color:white; border:none; border-radius:6px;">Delete</button>
+    </div>
+  </div>
+</div>
 
-        if root.value == key and root.left is None and root.right is None:
-            self.root = None
-            return f"Node '{key}' deleted. Tree is now empty."
+<div id="rewardModal" class="modal-overlay" style="display:none; perspective: 1000px;">
+  <div id="couponCard" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; position: relative; overflow: hidden; width: 400px; transform-style: preserve-3d; animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);">
+      
+      <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 5%, transparent 20%); background-size: 30px 30px; transform: rotate(30deg); pointer-events: none;"></div>
+      
+      <h2 style="margin: 0 0 20px 0; font-family: 'Courier New', monospace; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🎉 TASK COMPLETED! 🎉</h2>
+      <p style="font-size: 18px; margin-bottom: 25px;">Here is your reward coupon:</p>
+      
+      <div id="couponCodeDisplay" style="background: rgba(255,255,255,0.9); color: #333; font-size: 28px; font-weight: bold; padding: 20px; border: 3px dashed #333; margin: 0 auto 25px auto; display: inline-block; font-family: 'Courier New', monospace; letter-spacing: 2px; box-shadow: inset 0 0 10px rgba(0,0,0,0.2);">
+          </div>
+      
+      <p style="font-size: 14px; opacity: 0.8;">Valid for one-time use only.</p>
+      <button onclick="closeRewardModal()" style="margin-top: 25px; padding: 12px 30px; background: white; color: #764ba2; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; font-size: 16px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: transform 0.2s;">CLAIM & CLOSE</button>
+  </div>
+</div>
 
-        queue = [(root, None)]
-        key_node = None
-        deep = None
-        deep_parent = None
 
-        while queue:
-            current, parent = queue.pop(0)
-            deep = current
-            deep_parent = parent
+<script>
+// Existing functions
+function confirmDelete(courseName) {
+    document.getElementById('delete_course_input').value = courseName;
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+function closeModal() { document.getElementById('deleteModal').style.display = 'none'; }
+function submitDelete() { document.querySelector('.courses-panel form').submit(); }
 
-            if current.value == key:
-                key_node = current
+// New function to close reward modal
+function closeRewardModal() { document.getElementById('rewardModal').style.display = 'none'; }
 
-            if current.left:
-                queue.append((current.left, current))
-            if current.right:
-                queue.append((current.right, current))
 
-        if key_node is None:
-            return f"Node '{key}' not found."
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Handle Tree Expand/Collapse (existing)
+    document.querySelectorAll('.tree li > a').forEach(link => {
+        const childUl = link.parentElement.querySelector('ul');
+        // Optional: Add collapse behavior back if desired here.
+    });
 
-        key_node.value = deep.value
+    // 2. NEW: Check for Reward in the result message
+    const resultText = "{{ result or request.args.get('result', '') }}";
+    const resultContainer = document.getElementById('result-container-text');
+    const rewardMarker = "Reward Coupon: ";
 
-        if deep_parent:
-            if deep_parent.left == deep:
-                deep_parent.left = None
-            else:
-                deep_parent.right = None
+    if (resultText && resultText.includes(rewardMarker)) {
+        try {
+            const parts = resultText.split(rewardMarker);
+            if(parts.length > 1) {
+                 const couponCode = parts[1].trim();
+                 document.getElementById('couponCodeDisplay').innerText = couponCode;
+                 document.getElementById('rewardModal').style.display = 'flex';
+                 if(resultContainer) {
+                     resultContainer.innerText = parts[0] + " Check the popup for your reward!";
+                 }
+            }
+        } catch (e) {
+            console.error("Error parsing reward coupon:", e);
+        }
+    }
 
-        return f"Node '{key}' deleted."
+    // 3. Handle parent/side dropdown for inserting nodes
+    const parentSelect = document.getElementById("parentSelect");
+    const sideSelect = document.getElementById("sideSelect");
 
-    # -------------------------
-    # New helpers for web UI
-    # -------------------------
-    def find_by_path(self, path):
-        """
-        Path is a list of 'L' and 'R' steps from root.
-        Example: ['L','R','L'] -> root.left.right.left
-        """
-        node = self.root
-        if node is None:
-            return None
-        for step in path:
-            if step == 'L':
-                node = node.left
-            elif step == 'R':
-                node = node.right
-            else:
-                return None
-            if node is None:
-                return None
-        return node
+    if (parentSelect && sideSelect) {
+        function updateSideOptions() {
+            const selectedOption = parentSelect.options[parentSelect.selectedIndex];
+            const availableSides = selectedOption.dataset.sides.split(",");
 
-    def _generate_coupon(self):
-        """Generate a random 8-character promo code."""
-        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-        return f"TIKTOK-{code}"
+            sideSelect.querySelectorAll("option").forEach(opt => {
+                if (availableSides.includes(opt.value)) {
+                    opt.disabled = false;
+                } else {
+                    opt.disabled = true;
+                }
+            });
 
-    def toggle_node(self, node):
-        """
-        Toggle node.completed only if allowed.
-        Logic: A node can only be completed if all its existing children are completed.
-        """
-        if node is None:
-            return "Node not found."
+            // Auto-select first available side
+            const firstAvailable = availableSides[0];
+            sideSelect.value = firstAvailable || "L";
+        }
 
-        # If already completed, allow un-checking (reverting) without strict checks
-        if node.completed:
-            node.completed = False
-            return f"Reverted '{node.value}' to incomplete."
+        parentSelect.addEventListener("change", updateSideOptions);
+        updateSideOptions(); // initialize on page load
+    }
+});
 
-        # Check if children are ready (either None or Completed)
-        left_ready = node.left is None or node.left.completed
-        right_ready = node.right is None or node.right.completed
 
-        if left_ready and right_ready:
-            node.completed = True
-            coupon = self._generate_coupon()
-            return f"Goal '{node.value}' COMPLETED! Reward Coupon: {coupon}"
-        else:
-            return f"Locked: You must complete the smaller tasks below '{node.value}' first!"
+function toggleGoal(nodeValue, path) {
+    // Generate a form to submit the toggle request (existing logic)
+    const form = document.createElement('form');
+    form.method = 'POST';
+    const currentCourse = '{{ selected_course | urlencode }}'; 
+    let url = `/toggle_goal/${currentCourse}/`;
+    if (path) url += path;
+    form.action = url;
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+
+<style>
+/* Existing Styles */
+.tree { width: 100%; height: auto; text-align: center; }
+.tree ul { padding-top: 20px; position: relative; transition: .5s; }
+.tree li { display: inline-table; text-align: center; list-style-type: none; position: relative; padding: 10px; transition: .5s; }
+.tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 1px solid #ccc; width: 51%; height: 10px; }
+.tree li::after { right:auto; left:50%; border-left:1px solid #ccc; }
+.tree li.single-node::after, .tree li.single-node::before { display:none; }
+.tree li.single-node { padding-top:0; }
+.tree li.root::before, .tree li.root::after { border:0 none; }
+.tree li.last-node::before { border-right:1px solid #ccc; border-radius:0 5px 0 0; }
+.tree li.first-node::after { border-radius:5px 0 0 0; }
+.tree ul ul::before { content:''; position:absolute; top:0; left:50%; border-left:1px solid #ccc; width:0; height:20px; }
+.tree li a { border:1px solid #ccc; padding:10px; display:inline-grid; border-radius:5px; text-decoration:none; transition:.5s; background: white;}
+.tree li a span { border:1px solid #ccc; border-radius:5px; color:#666; padding:8px; font-size:12px; text-transform:uppercase; letter-spacing:1px; font-weight:500; }
+.tree li a:hover, .tree li a:hover i, .tree li a:hover span, .tree li a:hover+ul li a { background:#c8e4f8; color:#000; border:1px solid #94a0b4; }
+.tree li a:hover+ul li::after, .tree li a:hover+ul li::before, .tree li a:hover+ul::before, .tree li a:hover+ul ul::before { border-color:#94a0b4; }
+
+/* COMPLETED NODE STYLES */
+.tree li a.completed-node {
+    border: 2px solid #28a745 !important;
+    background-color: #d4edda !important;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+}
+.tree li a.completed-node span {
+    border: 1px solid #28a745 !important;
+    color: #155724 !important;
+    font-weight: bold;
+}
+
+/* MODAL STYLES */
+.modal-overlay {
+    position:fixed; 
+    top:0; left:0; width:100%; height:100%; 
+    background:rgba(0,0,0,0.7); /* Darker background for popups */
+    align-items:center; justify-content:center;
+    z-index: 1000; /* Ensure it's on top */
+}
+
+/* Animation for the coupon pop-up */
+@keyframes popIn {
+    0% { transform: scale(0.5) rotateX(-30deg); opacity: 0; }
+    70% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1) rotateX(0deg); }
+}
+
+#couponCard button:hover {
+    transform: scale(1.05);
+}
+</style>
+{% endblock %}
