@@ -57,18 +57,35 @@ def tree_to_dict(node):
         "right": tree_to_dict(node.right)
     }
 
-def gather_nodes_with_paths(node, path=None, out=None):
+def gather_nodes_with_available_slots(node, path=None, out=None):
+    """
+    Returns a list of tuples (node_value, path, available_sides)
+    Only includes nodes with at least one available child slot.
+    """
     if out is None:
         out = []
     if path is None:
         path = []
+
     if node is None:
         return out
-    out.append((node.value, "".join(path)))
+
+    available_sides = []
+    if not node.left:
+        available_sides.append("L")
+    if not node.right:
+        available_sides.append("R")
+
+    # Only include nodes with at least one available side
+    if available_sides:
+        out.append((node.value, "".join(path), available_sides))
+
+    # Recurse
     if node.left:
-        gather_nodes_with_paths(node.left, path + ["L"], out=out)
+        gather_nodes_with_available_slots(node.left, path + ["L"], out)
     if node.right:
-        gather_nodes_with_paths(node.right, path + ["R"], out=out)
+        gather_nodes_with_available_slots(node.right, path + ["R"], out)
+
     return out
 
 def convert_tree_to_html(node, current_path=""):
@@ -275,7 +292,8 @@ def tree_page():
 
     # Generate HTML for WHATEVER tree is selected (no more hardcoding)
     tree_html = generate_html_tree(tree) if tree else ""
-    nodes_with_paths = gather_nodes_with_paths(tree.root) if tree else []
+    nodes_with_paths = gather_nodes_with_available_slots(tree.root) if tree else []
+
 
     return render_template(
         "tree.html",
