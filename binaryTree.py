@@ -1,4 +1,5 @@
-# binaryTree.py
+import random
+import string
 
 class Node:
     """A node in a binary tree."""
@@ -7,7 +8,6 @@ class Node:
         self.left = left
         self.right = right
         self.completed = False  # checkbox state
-
 
 class BinaryTree:
     """A binary tree data structure."""
@@ -119,26 +119,31 @@ class BinaryTree:
                 return None
         return node
 
+    def _generate_coupon(self):
+        """Generate a random 8-character promo code."""
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        return f"TIKTOK-{code}"
+
     def toggle_node(self, node):
         """
         Toggle node.completed only if allowed.
-        Root is clickable only when both existing children are completed.
+        Logic: A node can only be completed if all its existing children are completed.
         """
         if node is None:
             return "Node not found."
 
-        if node is self.root:
-            # if root has no children, allow toggle
-            if node.left is None and node.right is None:
-                node.completed = not node.completed
-                return f"Toggled root '{node.value}' to {node.completed}"
-            left_ready = node.left is None or node.left.completed
-            right_ready = node.right is None or node.right.completed
-            if left_ready and right_ready:
-                node.completed = not node.completed
-                return f"Toggled root '{node.value}' to {node.completed}"
-            else:
-                return "Root is locked until both child branches are completed."
+        # If already completed, allow un-checking (reverting) without strict checks
+        if node.completed:
+            node.completed = False
+            return f"Reverted '{node.value}' to incomplete."
+
+        # Check if children are ready (either None or Completed)
+        left_ready = node.left is None or node.left.completed
+        right_ready = node.right is None or node.right.completed
+
+        if left_ready and right_ready:
+            node.completed = True
+            coupon = self._generate_coupon()
+            return f"Goal '{node.value}' COMPLETED! Reward Coupon: {coupon}"
         else:
-            node.completed = not node.completed
-            return f"Toggled '{node.value}' to {node.completed}"
+            return f"Locked: You must complete the smaller tasks below '{node.value}' first!"
