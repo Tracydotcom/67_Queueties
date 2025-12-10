@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Works{% endblock %}
+
+{% block content %}
+<section class="works-section">
+    <br>
+    <h2>our works ✧</h2>
+
+    <div class="tool-box">
+        <h3>Queue</h3>
+        <a href="{{ url_for('queue_page') }}">
+            <button type="button">open 💌</button>
+        </a>
+    </div>
+
+    <div class="tool-box">
+        <h3>Binary Tree</h3>
+        <a href="{{ url_for('btree_page') }}">
+            <button type="button">open 💌</button>
+        </a>
+    </div>
+    
+    <div class="tool-box">
+        <h3>BST Menu Organizer</h3>
+        <a href="{{ url_for('bst_menu') }}">
+            <button type="button">open 💌</button>
+        </a>
+    </div>
+
+
+    {% if result is not none %}
+    <div class="result-box">
+        <p><b>Result:</b> {{ result }}</p>
+    </div>
+    {% endif %}
+
+</section>
+{% endblock %}
