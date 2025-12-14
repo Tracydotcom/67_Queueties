@@ -2,35 +2,46 @@ import string
 import time
 
 MENU = {
-    # Drinks
-    "Brewed Coffee": {"price": 80, "prep_time": 1 * 60},
-    "Iced Coffee": {"price": 125, "prep_time": 2.5 * 60},
-    "Milk Tea (Bubble Tea)": {"price": 110, "prep_time": 4 * 60},
-    "Fresh Lemonade": {"price": 65, "prep_time": 2.5 * 60},
-    "Fruit Shake (Banana)": {"price": 125, "prep_time": 3.5 * 60},
+    # --- Drinks ---
+    # Sorted Price Check: 50, 65, 85, 110, 125, 140
+    # Median Root: ~85 or 110. This ensures a tree like: 85 (Left: 65, 50 | Right: 110, 125, 140)
     "Canned Soda / Bottled Water": {"price": 50, "prep_time": 0.5 * 60},
-    # Street Food
-    "French Fries": {"price": 70, "prep_time": 3.5 * 60},
-    "Siomai (Steamed)": {"price": 40, "prep_time": 1 * 60},
-    "Kwek-Kwek": {"price": 18, "prep_time": 1 * 60},
-    "Fish Balls / Kikiam": {"price": 40, "prep_time": 1 * 60},
-    "Pork BBQ Stick": {"price": 32, "prep_time": 1.5 * 60},
+    "Fresh Lemonade": {"price": 65, "prep_time": 2.5 * 60},
+    "Brewed Coffee": {"price": 85, "prep_time": 1 * 60},        # Root Candidate
+    "Milk Tea (Bubble Tea)": {"price": 110, "prep_time": 4 * 60},
+    "Iced Coffee": {"price": 125, "prep_time": 2.5 * 60},
+    "Fruit Shake (Banana)": {"price": 140, "prep_time": 3.5 * 60}, # Raised to be unique
+
+    # --- Street Food ---
+    # Sorted Price Check: 20, 25, 30, 35, 45, 50, 70
+    # Median Root: 35. Left: 20, 25, 30. Right: 45, 50, 70.
+    "Kwek-Kwek": {"price": 20, "prep_time": 1 * 60},
+    "Turon": {"price": 25, "prep_time": 0.5 * 60},
     "Grilled Hotdog": {"price": 30, "prep_time": 2.5 * 60},
-    "Turon": {"price": 28, "prep_time": 0.5 * 60},
-    # Simple Meals
-    "Tapsilog": {"price": 140, "prep_time": 6 * 60},
+    "Pork BBQ Stick": {"price": 35, "prep_time": 1.5 * 60},     # Root Candidate
+    "Siomai (Steamed)": {"price": 45, "prep_time": 1 * 60},     # Raised to be unique
+    "Fish Balls / Kikiam": {"price": 50, "prep_time": 1 * 60},  # Raised to be unique
+    "French Fries": {"price": 70, "prep_time": 3.5 * 60},
+
+    # --- Simple Meals ---
+    # Sorted Price Check: 70, 100, 120, 135, 150, 185
+    # Median Root: 120. Left: 70, 100. Right: 135, 150, 185.
     "Lugaw / Congee (with toppings)": {"price": 70, "prep_time": 1.5 * 60},
-    "Pasta (Simple sauce)": {"price": 185, "prep_time": 6 * 60},
-    "Grilled Cheese Sandwich": {"price": 125, "prep_time": 5.5 * 60},
-    "Basic Burger": {"price": 125, "prep_time": 6.5 * 60},
     "Pancit Canton (Stir-fry)": {"price": 100, "prep_time": 5 * 60},
-    # Baked Goods
-    "Chocolate Chip Cookie": {"price": 55, "prep_time": 0.5 * 60},
-    "Brownie Square": {"price": 65, "prep_time": 0.5 * 60},
+    "Basic Burger": {"price": 120, "prep_time": 6.5 * 60},      # Root Candidate
+    "Grilled Cheese Sandwich": {"price": 135, "prep_time": 5.5 * 60}, # Raised to be unique
+    "Tapsilog": {"price": 150, "prep_time": 6 * 60},
+    "Pasta (Simple sauce)": {"price": 185, "prep_time": 6 * 60},
+
+    # --- Baked Goods ---
+    # Sorted Price Check: 20, 35, 55, 75, 90, 110
+    # Median Root: ~75. Left: 20, 35, 55. Right: 90, 110.
     "Cheese Pandesal": {"price": 20, "prep_time": 0.5 * 60},
-    "Banana Cue": {"price": 28, "prep_time": 0.5 * 60},
-    "Leche Flan (Small)": {"price": 80, "prep_time": 1 * 60},
-    "Halo-Halo (Basic)": {"price": 105, "prep_time": 4 * 60},
+    "Banana Cue": {"price": 35, "prep_time": 0.5 * 60},
+    "Chocolate Chip Cookie": {"price": 55, "prep_time": 0.5 * 60},
+    "Brownie Square": {"price": 75, "prep_time": 0.5 * 60},    # Root Candidate
+    "Leche Flan (Small)": {"price": 90, "prep_time": 1 * 60},
+    "Halo-Halo (Basic)": {"price": 110, "prep_time": 4 * 60},
 }
 
 

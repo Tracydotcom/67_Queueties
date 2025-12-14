@@ -1,3 +1,4 @@
+
 import random
 import string
 
@@ -15,20 +16,20 @@ class BinaryTree:
         self.root = Node(root_value) if root_value is not None else None
 
     def insert_left(self, current_node, value):
-        """Insert a node as the left child of the current node."""
+        """Insert a node as the left child ONLY if empty."""
         if current_node.left is None:
             current_node.left = Node(value)
+            return True  # Success
         else:
-            new_node = Node(value, left=current_node.left)
-            current_node.left = new_node
+            return False # Failed: Spot occupied
 
     def insert_right(self, current_node, value):
-        """Insert a node as the right child of the current node."""
+        """Insert a node as the right child ONLY if empty."""
         if current_node.right is None:
             current_node.right = Node(value)
+            return True  # Success
         else:
-            new_node = Node(value, right=current_node.right)
-            current_node.right = new_node
+            return False # Failed: Spot occupied
 
     # traversal methods unchanged
     def preorder_traversal(self, start, traversal=""):

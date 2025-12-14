@@ -1,24 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for
 from myqueue import Queue
+from myqueue import MENU
 from binaryTree import BinaryTree, Node
+from BST import BinarySearchTree
 from BSTmenu import BSTMenuManager
 
 app = Flask(__name__)
 
 # --- Queue setup ---
 order_queue = Queue()
-
+bst_manager = BSTMenuManager()
 # --- Global course trees ---
-# (existing binaryTree initialization unchanged)
+
 sewing_tree = BinaryTree("Learn how to sew")
+# Root: Learn how to sew
+# L: Sew a dress, R: Sew a pocket
 sewing_tree.root.left = Node("Sew a dress")
 sewing_tree.root.right = Node("Sew a pocket")
+# L->L: Alter a shirt
 sewing_tree.root.left.left = Node("Alter a shirt")
+# L->L->L: Basic stitches, L->L->R: Basic fabric
 sewing_tree.root.left.left.left = Node("Learn basic stitches")
 sewing_tree.root.left.left.right = Node("Learn basic fabric types")
+# R->L: Sewing machine, R->R: Draping
 sewing_tree.root.right.left = Node("Use a sewing machine")
 sewing_tree.root.right.right = Node("Learn draping techniques")
 
+# Initialize Drawing Tree
 drawing_tree = BinaryTree("Learn how to draw")
 drawing_tree.root.left = Node("Perspective drawing")
 drawing_tree.root.left.left = Node("One-point perspective")
@@ -30,15 +38,18 @@ drawing_tree.root.left.right.left = Node("Sketch basic forms")
 drawing_tree.root.left.right.left.left = Node("Cylinder & Cone")
 drawing_tree.root.left.right.left.right = Node("Pyramid & Cube")
 
+
 courses = {
     "Learn how to sew": sewing_tree,
     "Learn how to draw": drawing_tree,
 }
 
 default_course = "Learn how to sew"
+
+# Track last selected course
 last_selected_course = {"course": default_course}
 
-# --- Helper functions (unchanged) ---
+# --- Helper functions ---
 def tree_to_dict(node):
     if node is None:
         return None
@@ -49,7 +60,7 @@ def tree_to_dict(node):
         "right": tree_to_dict(node.right)
     }
 
-def gather_nodes_with_available_slots(node, path=None, out=None):
+def gather_nodes_with_paths(node, path=None, out=None):
     if out is None:
         out = []
     if path is None:
@@ -57,45 +68,58 @@ def gather_nodes_with_available_slots(node, path=None, out=None):
     if node is None:
         return out
     available_sides = []
-    if not node.left:
-        available_sides.append("L")
-    if not node.right:
-        available_sides.append("R")
-    if available_sides:
-        out.append((node.value, "".join(path), available_sides))
+    if not node.left: available_sides.append("L")
+    if not node.right: available_sides.append("R")
+    out.append((node.value, "".join(path), available_sides))
     if node.left:
-        gather_nodes_with_available_slots(node.left, path + ["L"], out)
+        gather_nodes_with_paths(node.left, path + ["L"], out=out)
     if node.right:
-        gather_nodes_with_available_slots(node.right, path + ["R"], out)
+        gather_nodes_with_paths(node.right, path + ["R"], out=out)
     return out
 
 def convert_tree_to_html(node, current_path=""):
+    """Recursively convert BinaryTree nodes to HTML list items with path and status."""
     if node is None:
         return ""
+    
+    # Determine the CSS class for completed status
     completed_class = "completed-node" if node.completed else ""
+
     children = ""
     if node.left or node.right:
         children += "<ul>"
+        
+        # LEFT CHILD
         if node.left:
             left_path = current_path + "L"
             left_children_html = convert_tree_to_html(node.left, left_path)
+            # The <a> tag now uses the toggle_goal function via onclick
             children += f"""<li><a href='#' class='{completed_class}' onclick='toggleGoal("{node.left.value}", "{left_path}"); return false;'><span>{node.left.value}</span></a>{left_children_html}</li>"""
+
+        # RIGHT CHILD
         if node.right:
             right_path = current_path + "R"
             right_children_html = convert_tree_to_html(node.right, right_path)
+            # The <a> tag now uses the toggle_goal function via onclick
             children += f"""<li><a href='#' class='{completed_class}' onclick='toggleGoal("{node.right.value}", "{right_path}"); return false;'><span>{node.right.value}</span></a>{right_children_html}</li>"""
+            
         children += "</ul>"
     return children
 
 def generate_html_tree(tree):
     if not tree or not tree.root:
         return ""
+
     root_node = tree.root
-    root_completed_class = "completed-node" if getattr(root_node, "completed", False) else ""
+    root_completed_class = "completed-node" if root_node.completed else ""
+    
+    # Path for root is empty string ""
     root_children_html = convert_tree_to_html(root_node, "")
+
+    # Root node also gets the click handler. Path is empty string.
     return f"""<ul><li><a href='#' class='{root_completed_class}' onclick='toggleGoal("{root_node.value}", ""); return false;'><span>{root_node.value}</span></a>{root_children_html}</li></ul>"""
 
-# --- Flask routes (unchanged earlier ones) ---
+# --- Flask routes ---
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -125,6 +149,7 @@ def queue_page():
                 quantity = request.form.get(item_name, 0, type=int)
                 if quantity > 0:
                     selected_items[item_name] = quantity
+
             if selected_items:
                 order_details = order_queue.enqueue(selected_items)
                 wait_mins, wait_secs = divmod(order_details['wait'], 60)
@@ -143,35 +168,57 @@ def queue_page():
         result=result,
         menu=order_queue.MENU
     )
-
 @app.route("/toggle_goal/<course_name>/<path:node_path>", methods=["POST"])
-@app.route("/toggle_goal/<course_name>/", methods=["POST"])
+@app.route("/toggle_goal/<course_name>/", methods=["POST"]) # Handle root (empty path)
 def toggle_goal(course_name, node_path=""):
+    # node_path comes in as a string of 'L's and 'R's
     path_list = list(node_path) if node_path else []
-    tree = courses.get(course_name)
+    
+    # Use the course name stored in the dictionary keys
+    tree = courses.get(course_name) 
+
     if not tree:
         return redirect(url_for('tree_page', result="Error: Course not found."))
+
+    # Find the node using the path
     node_to_toggle = tree.find_by_path(path_list)
+
     if not node_to_toggle:
         return redirect(url_for('tree_page', result="Error: Node not found."))
-    result_message = tree.toggle_node(node_to_toggle)
-    last_selected_course["course"] = course_name
-    return redirect(url_for('btree_page', result=result_message))
 
-@app.route("/binarytree", methods=["GET", "POST"])
-def btree_page():
-    result = request.args.get('result', "")
+    # Apply the logic from binaryTree.py
+    result_message = tree.toggle_node(node_to_toggle)
+    
+    # Update last selected so we stay on this page
+    last_selected_course["course"] = course_name
+    
+    return redirect(url_for('tree_page', result=result_message))
+
+
+@app.route("/tree", methods=["GET", "POST"])
+def tree_page():
+    # Only use GET params for initial load. POST actions should start fresh.
+    result = request.args.get('result', "") 
     selected_course = last_selected_course["course"]
+    
+    # Safety check if selected course was deleted
     if selected_course not in courses and courses:
         selected_course = next(iter(courses.keys()))
         last_selected_course["course"] = selected_course
+    
     tree = courses.get(selected_course)
     show_custom_panel = False
+    
     if request.method == "POST":
+        # --- FIX: Clear the result from URL params if we are doing a POST action ---
+        result = "" 
+        
+        # --- DELETE COURSE ---
         delete_course = request.form.get("delete_course")
         if delete_course and delete_course in courses:
             courses.pop(delete_course)
             result = f"Course '{delete_course}' deleted successfully."
+            # Pick another course if available
             if courses:
                 selected_course = next(iter(courses.keys()))
                 last_selected_course["course"] = selected_course
@@ -179,16 +226,24 @@ def btree_page():
             else:
                 selected_course = None
                 tree = None
+
+        # --- Course selection ---
         clicked_course = request.form.get("course")
         if clicked_course and clicked_course in courses:
             selected_course = clicked_course
             tree = courses[selected_course]
             last_selected_course["course"] = selected_course
+            # Result remains empty here so the popup doesn't reappear
+
+        # --- Show custom panel ---
         if "create_custom" in request.form:
             show_custom_panel = True
+
+        # --- Save custom tree ---
         if "save_custom_tree" in request.form:
             course_title = request.form.get("root_goal", "").strip()
             root_node_value = request.form.get("child_goal", "").strip()
+            
             if not course_title or not root_node_value:
                 result = "Error: Course Title and Top Goal (Root Node) are mandatory."
                 show_custom_panel = True
@@ -203,12 +258,17 @@ def btree_page():
                 last_selected_course["course"] = course_title
                 show_custom_panel = True
                 result = f"Custom course '{course_title}' created."
+
+        # --- Insert node under existing node ---
         parent_path = request.form.get("parent_path")
         new_value = request.form.get("new_value", "").strip()
         side = request.form.get("side")
+        
         if parent_path is not None and new_value and tree:
+            # Handle empty string for root path
             path_list = list(parent_path) if parent_path else []
             parent_node = tree.find_by_path(path_list)
+            
             if parent_node:
                 if side == "L":
                     tree.insert_left(parent_node, new_value)
@@ -216,104 +276,117 @@ def btree_page():
                     tree.insert_right(parent_node, new_value)
                 result = f"Added '{new_value}' under '{parent_node.value}' on {side} side."
                 show_custom_panel = True
+            elif "new_value" in request.form:
+                parent_path = request.form.get("parent_path")
+                new_value = request.form.get("new_value", "").strip()
+                side = request.form.get("side")  # This might be None if the dropdown failed
+            
+            if parent_path is not None and new_value and tree:
+                path_list = list(parent_path) if parent_path else []
+                parent_node = tree.find_by_path(path_list)
+                
+                if parent_node:
+                    # --- STRICT CHECKING START ---
+                    if not side:
+                        # 1. Catch missing side (Fixes "None side" error)
+                        result = "Error: Please select a Side (Left or Right)."
+                    
+                    elif side == "L":
+                        # 2. Check if Left is occupied
+                        if parent_node.left is not None:
+                            result = f"Error: The Left side of '{parent_node.value}' is already taken!"
+                        else:
+                            tree.insert_left(parent_node, new_value)
+                            result = f"Success: Added '{new_value}' to the Left of '{parent_node.value}'."
+
+                    elif side == "R":
+                        # 3. Check if Right is occupied
+                        if parent_node.right is not None:
+                            result = f"Error: The Right side of '{parent_node.value}' is already taken!"
+                        else:
+                            tree.insert_right(parent_node, new_value)
+                            result = f"Success: Added '{new_value}' to the Right of '{parent_node.value}'."
+                    # --- STRICT CHECKING END ---
+                    
+                    show_custom_panel = True
+
+        # --- DONE button ---
         if "finish_custom" in request.form:
             show_custom_panel = False
             result = f"Custom course '{tree.root.value}' is done."
-    BinaryTree_html = generate_html_tree(tree) if tree else ""
-    nodes_with_paths = gather_nodes_with_available_slots(tree.root) if tree else []
+
+    # Generate HTML for WHATEVER tree is selected (no more hardcoding)
+    tree_html = generate_html_tree(tree) if tree else ""
+    nodes_with_paths = gather_nodes_with_paths(tree.root) if tree else []
+
     return render_template(
-        "binarytree.html",
+        "tree.html",
         result=result,
         courses=list(courses.keys()),
         selected_course=selected_course,
         show_custom_panel=show_custom_panel,
         nodes_with_paths=nodes_with_paths,
-        tree_html=BinaryTree_html
+        tree_html=tree_html
     )
+    
+menu_bst = BinarySearchTree()
+for item_name in MENU.keys():
+    menu_bst.root = menu_bst.insert(menu_bst.root, item_name)
 
-# ----- BST Menu route -----
-bst_manager = BSTMenuManager()
 
 @app.route('/BSTmenu', methods=['GET', 'POST'])
 def bst_menu():
     message = None
+    
+    # 1. Get Categories
     categories = bst_manager.get_categories()
-    selected_category = request.values.get('category') or (categories[0] if categories else '')
-    sort_by = request.values.get('sort_by') or 'price'
-    root_strategy = request.values.get('root_strategy') or 'oldest'
+    
+    # 2. Determine Selected Category
+    selected_category = request.form.get('category') or request.args.get('category')
+    if not selected_category and categories:
+        selected_category = categories[0]
 
-    # Build the tree using the chosen root strategy
-    tree, display_sorted = bst_manager.build_tree_for_category(selected_category, sort_by, root_strategy)
-
-    # initial traversals and stats
-    traversals = {
-        'inorder': bst_manager.inorder(tree),
-        'preorder': bst_manager.preorder(tree),
-        'postorder': bst_manager.postorder(tree)
-    }
-    stats = {
-        'min': bst_manager.get_min_item(tree),
-        'max': bst_manager.get_max_item(tree),
-        'height': bst_manager.get_height(tree)
-    }
-
+    # --- ACTION HANDLERS ---
     if request.method == 'POST':
-        # preserve root_strategy from POST form if present
-        root_strategy = request.form.get('root_strategy') or root_strategy
+        # A. SET ROOT / REBUILD TREE
+        if 'set_root' in request.form:
+            chosen_root = request.form.get('root_item')
+            bst_manager.reset_tree_with_root(selected_category, chosen_root)
+            message = f"Tree rebuilt with Root: {chosen_root}"
 
-        # Search
-        if request.form.get('search_name'):
-            q = request.form.get('search_name').strip()
-            found = bst_manager.search_by_name(tree, q)
-            message = f"Found: {found}" if found else f"'{q}' not found."
-        # Insert
-        elif request.form.get('insert_name'):
-            try:
-                name = request.form.get('insert_name').strip()
-                price = int(request.form.get('insert_price') or 0)
-                category_new = request.form.get('insert_category') or selected_category
-                popularity = int(request.form.get('insert_popularity') or 0)
-                new_item = bst_manager.insert_item(tree, name, price, category_new, popularity, sort_by)
-                message = f"Inserted: {new_item}"
-                if category_new == selected_category:
-                    tree, display_sorted = bst_manager.build_tree_for_category(selected_category, sort_by, root_strategy)
-            except Exception as e:
-                message = f"Insert error: {e}"
-        # Delete
-        elif request.form.get('delete_name'):
-            name = request.form.get('delete_name').strip()
-            deleted = bst_manager.delete_by_name(tree, name)
-            if deleted:
-                message = f"Deleted: {deleted}"
-                tree, display_sorted = bst_manager.build_tree_for_category(selected_category, sort_by, root_strategy)
-            else:
-                message = f"'{name}' not found to delete."
+        # B. SEARCH ONLY
+        elif 'search_name' in request.form:
+            name = request.form.get('search_name').strip()
+            rt = bst_manager.get_category_root(selected_category)
+            found = bst_manager.search_by_name(rt, name)
+            message = f"Found: {found}" if found else f"'{name}' not found."
 
-        # refresh traversals and stats after changes
-        traversals = {
-            'inorder': bst_manager.inorder(tree),
-            'preorder': bst_manager.preorder(tree),
-            'postorder': bst_manager.postorder(tree)
-        }
-        stats = {
-            'min': bst_manager.get_min_item(tree),
-            'max': bst_manager.get_max_item(tree),
-            'height': bst_manager.get_height(tree)
-        }
+    # 3. Get the specific TREE for this category
+    active_root = bst_manager.get_category_root(selected_category)
 
-    tree_html = bst_manager.get_tree_html(tree)
+    # 4. Get Items List for the Dropdown
+    category_items = bst_manager.get_items_in_category(selected_category)
+
+    # 5. Stats
+    stats = {
+        'min': bst_manager.get_min(active_root),
+        'max': bst_manager.get_max(active_root),
+        'height': bst_manager.get_height(active_root)
+    }
+
     return render_template(
         'BSTmenu.html',
         categories=categories,
         selected_category=selected_category,
-        sort_by=sort_by,
-        root_strategy=root_strategy,
-        display_sorted=display_sorted,
-        tree_html=tree_html,
-        traversals=traversals,
+        category_items=category_items,
+        tree_html=bst_manager.get_tree_html(active_root),
         stats=stats,
-        message=message
+        message=message,
+        inorder=bst_manager.inorder(active_root),
+        preorder=bst_manager.preorder(active_root),
+        postorder=bst_manager.postorder(active_root)
     )
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
