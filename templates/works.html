@@ -13,12 +13,31 @@
         </a>
     </div>
 
+    <div class="tool-box">
+        <h3>Binary Tree</h3>
+        <a href="{{ url_for('tree_page') }}">
+            <button type="button">open 💌</button>
+        </a>
+    </div>
+    
     {% if result is not none %}
     <div class="result-box">
         <p><b>Result:</b> {{ result }}</p>
     </div>
     {% endif %}
 
+    <div class="tool-box">
+        <h3>BST Menu</h3>
+        <a href="{{ url_for('bst_menu') }}">
+            <button type="button">open 🍔</button>
+        </a>
+    </div>
+
+    <div class="tool-box">
+        <h3>Train Guide</h3>
+        <a href="{{ url_for('graph_page') }}">
+            <button type="button">open 🚅</button>
+        </a>
+    </div>
 </section>
 {% endblock %}
-
