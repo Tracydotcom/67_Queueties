@@ -59,33 +59,28 @@ def build_graph():
     return graph
 
 def bfs_sp(graph, start, goal):
-    explored = []
+    if start == goal:
+        return [start]
 
+    explored = set()
     queue = [[start]]
 
-    if start == goal:
-        print("Its the Same Station")
-        return
-    
     while queue:
         path = queue.pop(0)
         node = path[-1]
 
         if node not in explored:
-            neighbours = graph[node]
-
-            for neighbour in neighbours:
-                new_path = list(path)
-                new_path.append(neighbour)
-                queue.append(new_path)
+            for neighbour in graph[node]:
+                new_path = path + [neighbour]
 
                 if neighbour == goal:
-                    print("The Shortest Route you can take is: ", *new_path, sep=" -> ")
-                    return
-            explored.append(node)
+                    return new_path  
 
-    print("So Sorry but the Stations you have selected dont have a connecting path")
-    return
+                queue.append(new_path)
+
+            explored.add(node)
+
+    return None
 
 if __name__ == "__main__":
 
