@@ -169,7 +169,7 @@ body {
     background-color: #fffaf8;
     border: 2px solid #d7b7a3;
     border-radius: 15px;
-    adding: 1.5rem;
+    padding: 1.5rem;
     margin: 1rem auto;
     width: 80%;
     max-width: 950px; 
@@ -298,31 +298,84 @@ footer {
     color: #7b5544;
 }
 
-
-.station-name {
-    font-weight: 600;
+/* 🚋 Route */
+.main-column {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 }
 
-.station-line {
-    font-size: 0.75rem;
-    margin-top: 4px;
-    padding: 2px 8px;
-    border-radius: 10px;
+.tool-box,
+.result-box {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.result-box {
+    padding: 24px 28px;
+}
+
+.route-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 1rem;
+}
+
+.route-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.route-row.reverse {
+    flex-direction: row-reverse;
+}
+
+.node-box {
+    background-color: #ffffff;
+    border: 2px solid #caa48a;
+    border-radius: 14px;
+    padding: 8px 14px;
+    min-width: 120px;
+    text-align: center;
+    font-weight: 600;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.node-box:hover {
+    transform: translateY(-4px);
+}
+
+.arrow {
+    font-size: 18px;
+    color: #b5838d;
+}
+
+.down-wrapper {
+    width: 100%;
+    display: flex;
+    margin: 6px 0 14px;
+    align-items: center;
+}
+
+.down-wrapper.right {
+    justify-content: flex-end;
+    padding-right: 60px; /* nudge arrow towards the gap between rows */
+}
+
+.down-wrapper.left {
+    justify-content: flex-start;
+    padding-left: 60px; /* nudge arrow towards the gap between rows */
+}
+
+.arrow-down {
+    font-size: 22px;
+    color: #b5838d;
+    line-height: 1;
     display: inline-block;
 }
 
-/* Line Colors */
-.lrt-1 .station-line {
-    background-color: #ffcad4;
-    color: #7a1c2e;
-}
 
-.lrt-2 .station-line {
-    background-color: #cdb4db;
-    color: #3b1e54;
-}
-
-.mrt-3 .station-line {
-    background-color: #bde0fe;
-    color: #1e3a5f;
-}
