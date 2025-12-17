@@ -363,12 +363,12 @@ footer {
 
 .down-wrapper.right {
     justify-content: flex-end;
-    padding-right: 60px; /* nudge arrow towards the gap between rows */
+    padding-right: 60px; 
 }
 
 .down-wrapper.left {
     justify-content: flex-start;
-    padding-left: 60px; /* nudge arrow towards the gap between rows */
+    padding-left: 60px; 
 }
 
 .arrow-down {
@@ -377,5 +377,6 @@ footer {
     line-height: 1;
     display: inline-block;
 }
+
 
 
