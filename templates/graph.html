@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Railway Route Finder{% endblock %}
+
+{% block content %}
+<section>
+<div class="works-section">
+    <h3>Railway Route Finder</h3>
+
+    <form method="post" action="/graph" class="menu-form">
+        <div class="menu-items">
+
+            <!-- START STATION -->
+            <div class="menu-item">
+                <label class="menu-item-label">Start Station</label>
+                <select name="start" required>
+                    {% for s in stations %}
+                        <option value="{{ s }}">{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- END STATION -->
+            <div class="menu-item">
+                <label class="menu-item-label">Destination Station</label>
+                <select name="end" required>
+                    {% for s in stations %}
+                        <option value="{{ s }}">{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+
+        <div class="tool-box button">
+            <button type="submit">Find Shortest Route</button>
+        </div>
+    </form>
+
+    <!-- RESULT -->
+    {% if route %}
+    <div class="result-box">
+        <p><strong>Shortest Route:</strong></p>
+        <p>
+            {% for station in route %}
+                {{ station }}{% if not loop.last %} → {% endif %}
+            {% endfor %}
+        </p>
+        <p><strong>Total Stations:</strong> {{ route|length }}</p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="result-box">
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+</div>
+</section>
+{% endblock %}
+

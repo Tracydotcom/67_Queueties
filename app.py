@@ -4,6 +4,8 @@ from myqueue import MENU
 from binaryTree import BinaryTree, Node
 from BST import BinarySearchTree
 from BSTmenu import BSTMenuManager
+from graph import build_graph, bfs_sp
+
 
 app = Flask(__name__)
 
@@ -385,6 +387,38 @@ def bst_menu():
         inorder=bst_manager.inorder(active_root),
         preorder=bst_manager.preorder(active_root),
         postorder=bst_manager.postorder(active_root)
+    )
+
+
+# Start of GRAPH
+rail_graph = build_graph()
+@app.route('/graph', methods=['GET', 'POST'])
+def graph_page():
+    route = None
+    error = None
+
+    if request.method == 'POST':
+        start = request.form.get('start')
+        end = request.form.get('end')
+
+        print("START:", start)
+        print("END:", end)
+        print("IN GRAPH?", start in rail_graph, end in rail_graph)
+
+        if start not in rail_graph or end not in rail_graph:
+            error = "Invalid station selected."
+        else:
+            route = bfs_sp(rail_graph, start, end)
+            print("ROUTE:", route)
+
+            if not route:
+                error = "No connecting route found."
+
+    return render_template(
+        'graph.html',
+        stations=sorted(rail_graph.keys()),
+        route=route,
+        error=error
     )
 
 
