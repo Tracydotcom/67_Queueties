@@ -299,3 +299,30 @@ footer {
 }
 
 
+.station-name {
+    font-weight: 600;
+}
+
+.station-line {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+/* Line Colors */
+.lrt-1 .station-line {
+    background-color: #ffcad4;
+    color: #7a1c2e;
+}
+
+.lrt-2 .station-line {
+    background-color: #cdb4db;
+    color: #3b1e54;
+}
+
+.mrt-3 .station-line {
+    background-color: #bde0fe;
+    color: #1e3a5f;
+}
