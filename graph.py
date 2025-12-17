@@ -22,6 +22,11 @@ def build_graph():
         ["Gil Puyat", "Libertad"],
         ["Libertad", "EDSA"],
         ["EDSA", "Baclaran"],
+        ["Baclaran", "Redemptorist-Aseana"],
+        ["Redemptorist-Aseana", "MIA Road"],
+        ["MIA Road", "PITX"],
+        ["PITX", "Ninoy Acquino Ave."],
+        ["Ninoy Acquino Ave.", "Dr. Santos"],
         ["Antipolo", "Marikina"],          ## START OF LRT-2
         ["Marikina", "Santolan"],
         ["Santolan", "Katipunan"],
