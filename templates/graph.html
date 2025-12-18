@@ -104,8 +104,96 @@
                 <div class="placeholder">Click a station to view details here.</div>
             </div>
         </div>
+
+<div class="fare-panel">
+            <h4 class="fare-main-header">Fare Calculator</h4>
+            
+            <div class="fare-content-box">
+                <div class="fare-control">
+                    <label for="discountType">Passenger Type:</label>
+                    <select id="discountType" name="discountType" onchange="toggleIdInput()">
+                        <option value="Regular">Single Journey (Regular)</option>
+                        <option value="Beep">Stored Value (Beep Card)</option>
+                        <option value="Student">Student</option>
+                        <option value="Senior">Senior Citizen</option>
+                        <option value="PWD">PWD</option>
+                    </select>
+                </div>
+
+                <div class="fare-control" id="idInputSection" style="display: none;">
+                    <label for="discountId">Enter ID / Card Number:</label>
+                    <input type="text" id="discountId" name="discountId" placeholder="e.g. 2023-00123" class="fare-input">
+                </div>
+
+                <button type="button" onclick="calculateFare()" class="btn-calculate">
+                    Check Fare
+                </button>
+
+                <hr class="fare-divider">
+
+                <div class="fare-result">
+                    <span class="fare-label">Total Fare:</span>
+                    <span class="fare-price" id="fareDisplay">₱ 0.00</span>
+                </div>
+            </div>
+        </div>
+        
     </div>
     {% endif %}
+<script>
+    // 1. Toggle ID Input Visibility
+    function toggleIdInput() {
+        const type = document.getElementById('discountType').value;
+        const inputSection = document.getElementById('idInputSection');
+        
+        // Show ID input only for discounted categories
+        if (['Student', 'Senior', 'PWD', 'Beep'].includes(type)) {
+            inputSection.style.display = 'flex';
+        } else {
+            inputSection.style.display = 'none';
+        }
+    }
 
+    // 2. Calculate Fare (AJAX Request to Flask)
+    async function calculateFare() {
+        // Get values from your EXISTING route finder dropdowns
+        const start = document.querySelector('select[name="start"]').value; 
+        const end = document.querySelector('select[name="end"]').value;
+        
+        // Get values from the NEW Fare Panel
+        const type = document.getElementById('discountType').value;
+        const idCode = document.getElementById('discountId').value;
+
+        // Basic Validation
+        if (['Student', 'Senior', 'PWD'].includes(type) && idCode.trim() === "") {
+            alert("Please enter your ID number for the discount.");
+            return;
+        }
+
+        // Send to Backend (Python)
+        try {
+            const response = await fetch('/calculate_fare', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    start: start,
+                    end: end,
+                    type: type
+                })
+            });
+
+            const data = await response.json();
+            
+            // Update the display
+            document.getElementById('fareDisplay').innerText = "₱ " + data.fare;
+            
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('fareDisplay').innerText = "Error";
+        }
+    }
+</script>
 </div>
 {% endblock %}

@@ -465,3 +465,74 @@ a:visited {
     display: inline-block;
 }
 
+.fare-panel {
+    background-color: #FFF0F5; /* Lavender Blush / Light Pink */
+    border: 1px solid #ffccd5;
+    border-radius: 15px;
+    padding: 20px;
+    width: 300px; /* Adjust width to fit your layout */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-top: 20px;
+    font-family: 'Courier New', Courier, monospace; /* Matching your font style */
+}
+
+.group-header {
+    color: #8b4513; /* SaddleBrown to match your "Railway Route Finder" text */
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.fare-control {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.fare-control label {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.fare-control select, 
+.fare-control input {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ffb6c1;
+    background-color: #fff;
+    outline: none;
+}
+
+.btn-calculate {
+    width: 100%;
+    background-color: #ffb6c1; /* Light Pink button */
+    color: #8b4513;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-calculate:hover {
+    background-color: #ff9aa2; /* Slightly darker on hover */
+}
+
+.fare-result {
+    text-align: center;
+    margin-top: 15px;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px dashed #ffb6c1;
+}
+
+.fare-price {
+    display: block;
+    font-size: 1.5rem;
+    color: #d63384; /* Deep pink for the price */
+    font-weight: bold;
+}

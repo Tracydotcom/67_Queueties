@@ -1,11 +1,11 @@
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from myqueue import Queue
 from myqueue import MENU
 from binaryTree import BinaryTree, Node
 from BST import BinarySearchTree
 from BSTmenu import BSTMenuManager
-from graph import build_graph, bfs_sp
+from graph import build_graph, bfs_sp, calculate_fare
 
 
 app = Flask(__name__)
@@ -480,7 +480,20 @@ def graph_page():
         error=error
         ,station_info=station_info
     )
-
+@app.route('/calculate_fare', methods=['POST'])
+def get_fare():
+    data = request.get_json()
+    start = data.get('start')
+    end = data.get('end')
+    ticket_type = data.get('type')
+    
+    path = bfs_sp(rail_graph, start, end)
+    
+    if path:
+        cost = calculate_fare(path, ticket_type)
+        return jsonify({'fare': cost})
+    else:
+        return jsonify({'fare': 0})
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
