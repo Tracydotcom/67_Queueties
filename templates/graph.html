@@ -43,48 +43,69 @@
 
     <!-- Route Output -->
     {% if route %}
-    <div class="result-box">
-        <p><strong>Shortest Route</strong> — total stations: {{ route|length }}</p>
+    <div class="results-container">
+        <div class="result-box">
+            <p><strong>Shortest Route</strong> — total stations: {{ route|length }}</p>
 
-        {% set ns = namespace(rows=[]) %}
-        {% for i in range(0, route|length, 5) %}
-            {% set ns.rows = ns.rows + [route[i:i+5]] %}
-        {% endfor %}
-
-        <div class="route-container">
-            {% for row in ns.rows %}
-                {% set reverse = loop.index0 % 2 == 1 %}
-
-                <!-- Horizontal row -->
-                <div class="route-row {{ 'reverse' if reverse }}">
-                    {% for station in row %}
-                        <div class="node-box">{{ station }}</div>
-
-                        {% if not loop.last %}
-                            <span class="arrow">
-                                {{ '←' if reverse else '→' }}
-                            </span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-
-                <!-- Down Arrow (anchored) -->
-                {% if not loop.last %}
-                <div class="down-wrapper {{ 'left' if reverse else 'right' }}">
-                    <span class="arrow-down">↓</span>
-                </div>
-                {% endif %}
+            {% set ns = namespace(rows=[]) %}
+            {% for i in range(0, route|length, 5) %}
+                {% set ns.rows = ns.rows + [route[i:i+5]] %}
             {% endfor %}
+
+            <div class="route-container">
+                {% for row in ns.rows %}
+                    {% set reverse = loop.index0 % 2 == 1 %}
+
+                    <!-- Horizontal row -->
+                    <div class="route-row {{ 'reverse' if reverse }}">
+                        {% for station in row %}
+                            {% set sid = station|replace(' ', '_')|replace('.', '')|replace('/', '_') %}
+                            {% if station in station_info %}
+                                <a class="node-box" href="#info-{{ sid }}" tabindex="0">{{ station }}</a>
+                            {% else %}
+                                <div class="node-box">{{ station }}</div>
+                            {% endif %}
+
+                            {% if not loop.last %}
+                                <span class="arrow">
+                                    {{ '←' if reverse else '→' }}
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Down Arrow (anchored) -->
+                    {% if not loop.last %}
+                    <div class="down-wrapper {{ 'left' if reverse else 'right' }}">
+                        <span class="arrow-down">↓</span>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-list">
+                {% if station_info %}
+                    {% for name, info in station_info.items() %}
+                        {% set sid = name|replace(' ', '_')|replace('.', '')|replace('/', '_') %}
+                        <h4 id="info-{{ sid }}" class="group-header">{{ name }}</h4>
+                        <div class="group-content">
+                            <div class="info-entry-box">
+                                <p class="info-text">{{ info|replace('\n','<br>')|safe }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No station information available.</p>
+                {% endif %}
+
+                <h4 class="default-header">Station Information Panel</h4>
+                <div class="placeholder">Click a station to view details here.</div>
+            </div>
         </div>
     </div>
     {% endif %}
 
 </div>
-
-<!-- Footer -->
-<footer>
-    ♡ made by 67_Queueities ♡
-</footer>
-
 {% endblock %}
-

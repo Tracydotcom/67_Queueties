@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, url_for
 from myqueue import Queue
 from myqueue import MENU
@@ -392,6 +393,64 @@ def bst_menu():
 
 # Start of GRAPH
 rail_graph = build_graph()
+station_info = {
+    #LRT1
+    "Fernando Poe Jr.": "Landmarks:\nSM City North Edsa\nTriNoma\nQuezon City Memorial Circle",
+    "Balintawak": "Landmarks:\nAyala Malls Cloverleaf",
+    "Yamaha Monumento": "Landmarks:\nSM City Grand Central\nMonumento Circle\nMalabon Zoo",
+    "5th Avenue": "Landmarks:\nThai To Taoist Temple Pagoda\nUng Siu Si Buddhist Temple\nPhilippine Cultural College",
+    "R.Papa": "No landmark information available.",
+    "Abad Santos": "Landmarks:\nManila Chinese Cemetery",
+    "Blumentritt": "Landmarks:\nBlumentritt Flea Market\nManila North Cemetery\nSM San Lazaro",
+    "Tayuman": "Landmarks:\nDangwa Flower Market\nDapitan Market\nEspirito Santo Church",
+    "Bambang": "Landmarks:\nBambang Medical Supplies\nJose Reyes Memorial Medical Center",
+    "Doroteo Jose": "Landmarks:\nDivisoria Mall\nManila Grand Opera Hotel",
+    "Carriedo": "Landmarks:\nArroceros Forest Park\nGolden Mosque\nLiwasang Bonifacio",
+    "Central Terminal": "Landmarks:\nFort Santiago\nIntramuros\nSM City Manila",
+    "United Nations": "Landmarks:\nNational Museums\nRizal Park\nMalacañang Park",
+    "Pedro Gil": "Landmarks:\nHyatt Hotel\nRobinsons Place Manila\nUP Manila",
+    "Quirino": "Landmarks:\nManila Zoo\nPaco Park\nMalate Church",
+    "Vito Cruz": "Landmarks:\nCoconut Palace\nFolk Arts Theater\nHarrison Plaza",
+    "Gil Puyat": "Landmarks:\nStar City\nUpside Down Museum\nWorld Trade Center",
+    "Libertad": "Landmarks:\nAglipayan Church\nCuneta Astrodome\nJapanese Embassy",
+    "EDSA": "Landmarks:\nThe Dessert Museum\nHeritage Hotel\nPhilippine Senate",
+    "Baclaran": "Landmarks:\nAyala Malls Manila Bay\nSM Mall of Asia\nSolaire Resort and Casino",
+    "Redemptorist-Aseana": "Landmarks:\nOkada Manila\nNational Shrine of Our Mother of Perpetual Help\nAseana City",
+    "PITX": "",
+    "Ninoy Acquino Avenue": "Landmarks:\nParañaque Cathedral\nDuty Free Philippines Fiestamall Store\nPolytechnic University of the Philippines Parañaque Campus",
+    "Dr. Santos": "Landmarks:\nSM City Sucat\nLas Pinas/Parañaque Critical Habitat and Ecotourism Area\nSt. Joseph Parish Church",
+    
+    #LRT2
+    "Recto": "Landmarks:\nRaon Shopping Center\nDEECO Recto\nArranque Market",
+    "Legarda": "Landmarks:\nSan Beda University\nLegarda Suites\nSan Sebastian Basilica",
+    "Pureza": "Landmarks:\nPUP Main Campus\nEARIST\nSacred Heart of Jesus Parish",
+    "V. Mapa": "Landmarks:\nSM City Sta. Mesa\nMezza Residences\nDorm ni Aliah",
+    "J. Ruiz": "Pinaglabanan Shrine\nSan Juan City Hall\nSt. John the Baptist Church",
+    "Gilmore": "Landmarks:\nGilmore IT Center\nRobinsons Magnolia\nAurora Garden Plaza",
+    "Betty-Go Belmonte": "Landmarks:\nCubao Cathedral\nHoly Buddhist Temple\nReligious of the Virgin Mary Motherhouse",
+    "LRT Araneta-Center Cubao": "Landmarks:\nSM Cubao\nSmart Araneta Coliseum\nGateway Mall",
+    "Anonas": "Landmarks:\nAnonas City Center\nHi-Top Supermart\nTechnological Institute of the Philippines",
+    "Katipunan": "Landmarks:\nMiriam College\nUP Diliman\nPhilippine School of Business Administration",
+    "Santolan": "Landmarks:\nSM City Marikina\nRiverbanks Center\nMarikina River",
+    "Marikina": "Landmarks:\nRobinsons Metro-East\nSta.Lucia East Grand Mall\nAyala Malls Feliz",
+    "Antipolo": "Landmarks:\nSM City Masinag\nAntipolo Cathedral\nOur Lady of Fatima University",
+
+    #MRT3   
+    "Taft Avenue": "Landmarks:\nNinoy Aquino International Airport\nSM Mall of Asia\nSMX Convention Center",
+    "Magallanes": "Landmarks:\nColegio San Agustin-Makati\nAlphaland Makati\nAsia Pacific College",
+    "Ayala": "Landmarks:\nAyala Triangle Gardens\nGlorietta\nSM Makati",
+    "Buendia": "",
+    "Guadalupa": "Landmarks:\nRockwell Center\nRoman Catholic Archdiocese of Manila\nUniversity of Makati",
+    "Boni": "Landmarks:\nTV5 Media Center\nRobinsons Cybergate\nParagon Plaza",
+    "Shaw Boulevard": "Landmarks:\nShangri-La Plaza\nPavillion Mall\nStarmall Shaw",
+    "Ortigas": "Landmarks:\nRobinsons Galleria\nEDSA Shrine",
+    "Santolan-Annapolis": "Landmarks:\nCamp Crame\nCamp Aguinaldo\nGreenhills Shopping Center",
+    "MRT Araneta-Cubao": "Landmarks:\nSM Cubao\nSmart Araneta Coliseum\nGateway Mall",
+    "GMA-Kamuning": "Landmarks:\nGMA Network\nQuezon Memorial Circle\nPhilippine Heart Center",
+    "Quezon Avenue": "Landmarks:\nUniversity of the Philippines-Diliman\nEton Centris\nPAGASA Complex",
+    "North Avenue": "Landmarks:\nSM City North EDSA\nVertis North\nNinoy Aquino Parks and Wildlife Center",
+}
+
 @app.route('/graph', methods=['GET', 'POST'])
 def graph_page():
     route = None
@@ -419,6 +478,7 @@ def graph_page():
         stations=sorted(rail_graph.keys()),
         route=route,
         error=error
+        ,station_info=station_info
     )
 
 

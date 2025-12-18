@@ -313,6 +313,7 @@ footer {
 
 .result-box {
     padding: 24px 28px;
+    flex: 1 1 auto;
 }
 
 .route-container {
@@ -339,6 +340,7 @@ footer {
     border: 2px solid #caa48a;
     border-radius: 14px;
     padding: 8px 14px;
+    box-shadow: 1px 1px 5px #b5838d;
     min-width: 120px;
     text-align: center;
     font-weight: 600;
@@ -347,6 +349,91 @@ footer {
 
 .node-box:hover {
     transform: translateY(-4px);
+}
+
+.results-container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  max-width: 2000px;
+  margin: 0 auto;
+}
+
+.info-panel {
+    width: 300px;
+    min-width: 300px;  
+    max-width: 100px;  
+    height: fit-content;  
+    max-height: 600px; 
+    overflow-y: auto;  
+    background: #fce4ec;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 2px solid #f0d6d3;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.group-header { 
+    display: none; 
+    margin: 0 0 0px 0; 
+    font-size: 1rem; 
+    color: #6b3f36; }
+
+.group-header:target { 
+    display: block; 
+}
+
+.group-content { 
+    display: none; 
+}
+.group-header:target + .group-content { 
+    display: block; 
+}
+
+.info-entry-box { 
+    background: #fff5f8; 
+    border-radius: 12px; 
+    padding: 12px; 
+    border: 1px solid #f0d6d3; 
+    box-shadow: 0 8px 24px rgba(181,131,133,0.06); 
+}
+
+.info-entry-box .info-text { 
+    margin: 2px; 
+    color: #4b3b36; 
+    font-size: 0.95rem; 
+}
+
+.default-header { 
+    margin: 0 0 8px 0; 
+    font-size: 1rem; 
+    color:#6b3f36; 
+}
+
+a:link {
+  color: #5c4033;
+  background-color: #fff;
+  text-decoration: none;
+}
+a:visited {
+  color: #5c4033;
+  background-color: #fff;
+  text-decoration: none;
+}
+
+.group-header:target ~ .default-header { display: none; }
+.group-header:target ~ .placeholder { display: none; }
+
+.placeholder {
+    color: #7b5544;
+    font-style: italic;
+    margin-top: 20px;
 }
 
 .arrow {
@@ -377,6 +464,4 @@ footer {
     line-height: 1;
     display: inline-block;
 }
-
-
 
