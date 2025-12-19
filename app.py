@@ -446,7 +446,7 @@ station_info = {
     "Ortigas": "Landmarks:\nRobinsons Galleria\nEDSA Shrine",
     "Santolan-Annapolis": "Landmarks:\nCamp Crame\nCamp Aguinaldo\nGreenhills Shopping Center",
     "MRT Araneta-Cubao": "Landmarks:\nSM Cubao\nSmart Araneta Coliseum\nGateway Mall",
-    "GMA-Kamuning": "Landmarks:\nGMA Network\nQuezon Memorial Circle\nPhilippine Heart Center",
+    "GMA Kamuning": "Landmarks:\nGMA Network\nQuezon Memorial Circle\nPhilippine Heart Center",
     "Quezon Avenue": "Landmarks:\nUniversity of the Philippines-Diliman\nEton Centris\nPAGASA Complex",
     "North Avenue": "Landmarks:\nSM City North EDSA\nVertis North\nNinoy Aquino Parks and Wildlife Center",
 }
