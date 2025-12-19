@@ -45,8 +45,11 @@
     {% if route %}
     <div class="results-container">
         <div class="result-box">
-            <p><strong>Shortest Route</strong> — total stations: {{ route|length }}</p>
-
+            <p><strong>Shortest Route</strong><br>
+            🚆 — Total Stations: {{ route|length }}<br>
+            🕒 Estimated travel time: {{ travel_time }}
+            </p>
+            
             {% set ns = namespace(rows=[]) %}
             {% for i in range(0, route|length, 5) %}
                 {% set ns.rows = ns.rows + [route[i:i+5]] %}
