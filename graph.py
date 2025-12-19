@@ -2,7 +2,7 @@ import math
 from collections import defaultdict
 from pprint import pprint
 
-time_per_station = 90
+time_per_station = 180
 
 def build_graph():
     edges = [
