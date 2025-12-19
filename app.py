@@ -5,7 +5,7 @@ from myqueue import MENU
 from binaryTree import BinaryTree, Node
 from BST import BinarySearchTree
 from BSTmenu import BSTMenuManager
-from graph import build_graph, bfs_sp, calculate_fare, ompute_travel_time
+from graph import build_graph, bfs_sp, calculate_fare, compute_travel_time
 
 
 app = Flask(__name__)
@@ -502,4 +502,5 @@ def get_fare():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
+
 
