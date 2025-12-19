@@ -2,6 +2,8 @@ import math
 from collections import defaultdict
 from pprint import pprint
 
+time_per_station = 90
+
 def build_graph():
     edges = [
         ["Roosevelt", "Balintawak"],        ## START OF LRT-1
@@ -87,6 +89,16 @@ def bfs_sp(graph, start, goal):
             explored.add(node)
 
     return None
+
+def compute_travel_time(route):
+    if not route or len(route) < 2:
+        return "0 min 0 sec"
+
+    total_seconds = (len(route) - 1) * time_per_station
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+
+    return f"{minutes} min {seconds} sec"
 
 if __name__ == "__main__":
 
