@@ -135,6 +135,10 @@ def profile():
 def contacts():
     return render_template('contacts.html')
 
+@app.route('/sorting')
+def sort_page():
+    return render_template('sorting.html')
+
 @app.route('/works', methods=['GET', 'POST'])
 def works():
     result = None
@@ -499,6 +503,32 @@ def get_fare():
         return jsonify({'fare': cost})
     else:
         return jsonify({'fare': 0})
+
+# Sorting Algos
+
+@app.route('/insertion_sort')
+def insert_sort():
+    return render_template('insertion_sort.html')
+
+@app.route('/merge_sort')
+def merge_sort():
+    return render_template('merge_sort.html')
+
+@app.route('/selection_sort')
+def select_sort():
+    return render_template('select_sort.html')
+
+@app.route('/quick_sort')
+def quick_sort():
+    return render_template('quick_sort.html')
+
+@app.route('/bubble_sort')
+def bubble_sort():
+    return render_template('bubble_sort.html')
+
+@app.route('/big_o')
+def big_o():
+    return render_template('big_o.html')
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

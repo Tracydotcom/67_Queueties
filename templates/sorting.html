@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Sorting{% endblock %}
+
+{% block content %}
+<section class="works-section">
+    <br>
+    <h2>Our Sorting Algorithms ✧</h2>
+
+    <div class="tool-box">
+        <h3>Insertion Sort</h3>
+        <a href="{{ url_for('insert_sort') }}">
+            <button type="button">open</button>
+        </a>
+    </div>
+
+    <div class="tool-box">
+        <h3>Merge Sort</h3>
+        <a href="{{ url_for('merge_sort') }}">
+            <button type="button">open</button>
+        </a>
+    </div>
+    
+    <div class="tool-box">
+        <h3>Selection Sort</h3>
+        <a href="{{ url_for('select_sort') }}">
+            <button type="button">open</button>
+        </a>
+    </div>
+
+    <div class="tool-box">
+        <h3>Quick Sort</h3>
+        <a href="{{ url_for('quick_sort') }}">
+            <button type="button">open</button>
+        </a>
+    </div>
+
+    <div class="tool-box">
+        <h3>Bubble Sort</h3>
+        <a href="{{ url_for('bubble_sort') }}">
+            <button type="button">open</button>
+        </a>
+    </div>
+
+    <div class="tool-box">
+        <h3>Big O Complexity</h3>
+        <a href="{{ url_for('big_o') }}">
+            <button type="button">open</button>
+        </a>
+    </div>
+</section>
+{% endblock %}
