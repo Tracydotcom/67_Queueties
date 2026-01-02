@@ -144,7 +144,7 @@
     </div>
     {% endif %}
 <script>
-    // 1. Toggle ID Input Visibility
+    //Toggle ID Input Visibility
     function toggleIdInput() {
         const type = document.getElementById('discountType').value;
         const inputSection = document.getElementById('idInputSection');
@@ -157,13 +157,13 @@
         }
     }
 
-    // 2. Calculate Fare (AJAX Request to Flask)
+    // 2. Calculate Fare
     async function calculateFare() {
-        // Get values from your EXISTING route finder dropdowns
+        // Get values from existing route finder dropdowns
         const start = document.querySelector('select[name="start"]').value; 
         const end = document.querySelector('select[name="end"]').value;
         
-        // Get values from the NEW Fare Panel
+        // Get values from the Fare Panel
         const type = document.getElementById('discountType').value;
         const idCode = document.getElementById('discountId').value;
 
@@ -173,7 +173,7 @@
             return;
         }
 
-        // Send to Backend (Python)
+        // Send to Backend
         try {
             const response = await fetch('/calculate_fare', {
                 method: 'POST',

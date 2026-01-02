@@ -466,14 +466,17 @@ a:visited {
 }
 
 .fare-panel {
-    background-color: #FFF0F5; /* Lavender Blush / Light Pink */
-    border: 1px solid #ffccd5;
-    border-radius: 15px;
-    padding: 20px;
-    width: 300px; /* Adjust width to fit your layout */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    margin-top: 20px;
-    font-family: 'Courier New', Courier, monospace; /* Matching your font style */
+    width: 300px;
+    min-width: 300px;  
+    max-width: 100px;  
+    height: fit-content;  
+    max-height: 600px; 
+    overflow-y: auto;  
+    background: #fce4ec;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 2px solid #f0d6d3;
+    border-radius: 20px;
+    padding: 20px; /* Matching your font style */
 }
 
 .group-header {

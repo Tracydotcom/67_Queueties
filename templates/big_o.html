@@ -1,1 +1,232 @@
 {% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* --- MODERN DESIGN SYSTEM --- */
+    :root {
+        /* Neutral Colors */
+        --bg-color: #f8f9fa;
+        --text-main: #2d3436;
+        --text-muted: #636e72;
+        --card-bg: #ffffff;
+        
+        /* Accents */
+        --primary-accent: #0984e3; /* Blue for links/highlights */
+        --danger-accent: #d63031;  /* Red for O(n^2) */
+        --success-accent: #00b894; /* Green for O(n log n) */
+        
+        /* Effects */
+        --radius: 12px;
+        --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+        --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+        --transition: all 0.3s ease;
+    }
+
+    /* Typography */
+    .portfolio-container {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        color: var(--text-main);
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .section-title {
+        font-weight: 700;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .section-subtitle {
+        text-align: center;
+        color: var(--text-muted);
+        margin-bottom: 50px;
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Card Component */
+    .tech-card {
+        background: var(--card-bg);
+        border-radius: var(--radius);
+        padding: 0;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        border: 1px solid rgba(0,0,0,0.02);
+        overflow: hidden;
+    }
+
+    .tech-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .card-header-strip {
+        padding: 15px 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .strip-slow { background-color: rgba(214, 48, 49, 0.1); color: var(--danger-accent); }
+    .strip-fast { background-color: rgba(0, 184, 148, 0.1); color: var(--success-accent); }
+
+    .card-content {
+        padding: 30px;
+        display: grid;
+        grid-template-columns: 40% 55%; /* Text takes 40%, Videos take 55% */
+        gap: 5%;
+        align-items: center;
+    }
+
+    /* --- HORIZONTAL VIDEO STACK --- */
+    .media-stack {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Default 50/50 Split */
+        gap: 15px;
+        align-items: center;
+    }
+    
+    /* Special class for 3 items (Selection Sort added) */
+    .media-stack.three-items {
+        grid-template-columns: 1fr 1fr 1fr; /* Split into thirds if you have 3 videos */
+    }
+
+    video.concept-image, img.concept-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        border: 1px solid rgba(0,0,0,0.05);
+        display: block;
+        background: #000; /* Placeholder bg */
+    }
+
+    /* Text Styling */
+    .algo-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-right: 8px;
+        background: #f1f2f6;
+        color: var(--text-muted);
+        margin-bottom: 5px;
+    }
+
+    /* Verdict Section */
+    .verdict-box {
+        background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
+        color: white;
+        border-radius: var(--radius);
+        padding: 40px;
+        text-align: center;
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 900px) {
+        .card-content {
+            grid-template-columns: 1fr; /* Stack main card content */
+            gap: 30px;
+        }
+    }
+    @media (max-width: 500px) {
+        .media-stack, .media-stack.three-items {
+            grid-template-columns: 1fr; /* Stack videos on mobile */
+        }
+    }
+</style>
+
+<div class="portfolio-container">
+    
+    <h1 class="section-title">Performance Analysis</h1>
+    <p class="section-subtitle">
+        An exploration of algorithmic efficiency. This page analyzes how different sorting methods perform as the dataset size increases.
+    </p>
+
+    <div class="tech-card">
+        <div class="card-header-strip strip-slow">
+            <span>The "Slow" Group</span>
+            <span>O(n²)</span>
+        </div>
+        <div class="card-content">
+            <div class="text-group">
+                <h3 style="color: var(--danger-accent); margin-bottom: 15px;">Quadratic Time</h3>
+                <div style="margin-bottom: 20px;">
+                    <span class="algo-badge">Bubble Sort</span>
+                    <span class="algo-badge">Insertion Sort</span>
+                    <span class="algo-badge">Selection Sort</span>
+                </div>
+                <p>
+                    These algorithms are like <strong>biking across the country</strong>. They work for small lists but freeze up when data grows.
+                </p>
+                <ul style="padding-left: 20px; color: var(--text-muted); margin-top: 15px;">
+                    <li style="margin-bottom: 8px;"><strong>Analogy:</strong> The Handshake Problem. If everyone shakes hands with everyone else, the work explodes.</li>
+                    <li><strong>Technical:</strong> Uses nested loops.</li>
+                </ul>
+            </div>
+
+            <div class="image-group media-stack three-items">
+                <video class="concept-image" controls autoplay loop muted playsinline>
+                    <source src="{{ url_for('static', filename='videos/bubblesort.mp4') }}" type="video/mp4">
+                </video>
+                
+                <video class="concept-image" controls autoplay loop muted playsinline>
+                    <source src="{{ url_for('static', filename='videos/insertsort.mp4') }}" type="video/mp4">
+                </video>
+
+                <video class="concept-image" controls autoplay loop muted playsinline>
+                    <source src="{{ url_for('static', filename='videos/selectionsort.mp4') }}" type="video/mp4">
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <div class="tech-card">
+        <div class="card-header-strip strip-fast">
+            <span>The "Fast" Group</span>
+            <span>O(n log n)</span>
+        </div>
+        <div class="card-content">
+            <div class="text-group">
+                <h3 style="color: var(--success-accent); margin-bottom: 15px;">Linearithmic Time</h3>
+                <div style="margin-bottom: 20px;">
+                    <span class="algo-badge" style="background:rgba(0,184,148,0.1); color:var(--success-accent)">Merge Sort</span>
+                    <span class="algo-badge" style="background:rgba(0,184,148,0.1); color:var(--success-accent)">Quick Sort</span>
+                </div>
+                <p>
+                    These algorithms are like <strong>flying a jet</strong>. They are optimized to handle massive amounts of data efficiently.
+                </p>
+                <ul style="padding-left: 20px; color: var(--text-muted); margin-top: 15px;">
+                    <li style="margin-bottom: 8px;"><strong>Analogy:</strong> The Dictionary Search. You don't read every page; you split the book in half repeatedly.</li>
+                    <li><strong>Technical:</strong> Uses "Divide and Conquer."</li>
+                </ul>
+            </div>
+            
+            <div class="image-group media-stack">
+                <video class="concept-image" controls autoplay loop muted playsinline>
+                    <source src="{{ url_for('static', filename='videos/mergesort.mp4') }}" type="video/mp4">
+                </video>
+
+                <video class="concept-image" controls autoplay loop muted playsinline>
+                    <source src="{{ url_for('static', filename='videos/quicksort.mp4') }}" type="video/mp4">                </video>
+            </div>
+        </div>
+    </div>
+    <div class="credit-footer">
+        <p>
+            <i class="bi bi-camera-video"></i> Algorithm animations provided by 
+            <a href="https://github.com/michaelsambol" target="_blank">Michael Sambol</a>.
+        </p>
+    </div>
+</div>
+{% endblock %}

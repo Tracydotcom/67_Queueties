@@ -214,7 +214,7 @@ def compute_segment_cost(start, end, passenger_type):
     dist2 = STATION_DATA[end][1]
     km_travelled = abs(dist1 - dist2)
 
-    # 2. Base Rates (Approximation of Metro Manila Fares)
+    # 2. Base Rates
     base_fare = 13.00
     per_km = 1.00
 
@@ -231,9 +231,6 @@ def compute_segment_cost(start, end, passenger_type):
     # 4. Rounding (Standard tickets round to nearest integer)
     return math.ceil(fare)
 
-# ==========================================
-# 3. MAIN EXECUTION
-# ==========================================
 
 if __name__ == "__main__":
     graph = build_graph()
