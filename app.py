@@ -7,6 +7,7 @@ from BST import BinarySearchTree
 from BSTmenu import BSTMenuManager
 from graph import build_graph, bfs_sp, calculate_fare, compute_travel_time
 from quick_sort import quicksort
+from bubble_sort import bubblesort
 
 app = Flask(__name__)
 
@@ -535,9 +536,22 @@ def quick_sort():
     )
 
 
-@app.route('/bubble_sort')
+@app.route('/bubble_sort', methods=['GET', 'POST'])
 def bubble_sort():
-    return render_template('bubble_sort.html')
+    sorted_nums = None
+    original_nums = None
+
+    if request.method == 'POST':
+        nums_str = request.form.get('numbers')
+        original_nums = [int(x.strip()) for x in nums_str.split(',')]
+        sorted_nums = bubblesort(original_nums)
+
+    return render_template(
+        'bubble_sort.html',
+        sorted_nums=sorted_nums,
+        original_nums=original_nums
+    )
+
 
 @app.route('/big_o')
 def big_o():
