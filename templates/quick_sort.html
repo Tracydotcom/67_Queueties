@@ -1,1 +1,51 @@
 {% extends "base.html" %}
+{% block title %}Quick Sort{% endblock %}
+{% block content %}
+<style>
+    .box {
+      width: 1200px; /* Sets the width of the content area */
+      padding: 20px; /* Adds space between content and border */
+      border: 2px solid rgb(172, 105, 105); /* Adds a visible border around the padding and content */
+      margin: auto; /* Adds space outside the border to separate from other elements */
+      margin-top: 20px;
+      background-color: rgb(255, 250, 250); /* Fills the background of the box */
+      border-radius: 10px; /* Rounds the corners of the box */
+      box-shadow: 3px 3px 3px #aaaaaa; /* Adds a subtle shadow for depth */
+    }
+</style>
+
+<section class="Intro-to-Quicksort">
+    <div class="box">
+        <h1>Quick Sort Algorithm</h1>
+        <p style="text-align: left;">A Quick Sort Algorithm utilizes a pivot and partitions to create a "divide and conquer" style of sorting. The pivot 
+            is used as a reference point for partitioning the elements. <br>
+        
+            <strong>Take these numbers for example: 7, 18, 2, 1, 29 </strong> <br>
+
+            "2" is the median where other elements are compared to create partitions. in this case, it compares whether the number is
+            lesser, greater, or equal to 2. The logic is then recursively applied to the partitions resulting in a sorted array.
+        </p>
+        
+    </div>
+</section>
+<section class="demonstration">
+    <div class="box">
+        <h2>Try it out here</h2>
+
+        <form method="POST">
+            <label>Enter numbers (comma-separated):</label><br>
+            <input type="text" name="numbers" required placeholder="ex. 4,3,2,5,7,45,34,5">
+            <br><br>
+            <button type="submit">Sort</button>
+        </form>
+
+        {% if sorted_nums %}
+            <hr>
+            <p><strong>Original:</strong> {{ original_nums }}</p>
+            <p><strong>Sorted:</strong> {{ sorted_nums }}</p>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}
+
