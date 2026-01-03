@@ -1,1 +1,60 @@
 {% extends "base.html" %}
+{% block title %}Bubble Sort{% endblock %}
+{% block content %}
+
+<section class="works-section">
+
+    <!-- Intro Box -->
+    <div class="tool-box" style="width: 900px;">
+        <h3>Bubble Sort Algorithm</h3>
+
+        <p style="text-align: left; font-size: 0.95rem;">
+            The <strong>Bubble Sort Algorithm</strong> is a simple comparison-based sorting technique.
+            It repeatedly steps through the list, compares adjacent elements, and swaps them if they
+            are in the wrong order.
+            <br><br>
+
+            This process is repeated until no swaps are needed, meaning the list is fully sorted.
+            Smaller elements <em>“bubble”</em> to the front of the list, while larger elements move
+            toward the end.
+            <br><br>
+
+            <strong>Example:</strong><br>
+            Given the numbers <strong>7, 18, 2, 1, 29</strong><br><br>
+
+            7 &gt; 18 ❌ (no swap)<br>
+            18 &gt; 2 ✅ (swap)<br>
+            18 &gt; 1 ✅ (swap)<br>
+            …<br><br>
+
+            After multiple passes, the numbers become sorted.
+        </p>
+    </div>
+
+    <!-- Demo Box -->
+    <div class="tool-box" style="width: 900px;">
+        <h3>Try it out</h3>
+
+        <form method="POST">
+            <label>Enter numbers (comma-separated):</label><br>
+            <input
+                type="text"
+                name="numbers"
+                required
+                placeholder="ex. 4,3,2,5,7,45,34,5"
+            >
+            <br><br>
+            <button type="submit">Sort</button>
+        </form>
+    </div>
+
+    {% if sorted_nums %}
+    <div class="result-box">
+        <p><strong>Original:</strong> {{ original_nums }}</p>
+        <p><strong>Sorted:</strong> {{ sorted_nums }}</p>
+    </div>
+    {% endif %}
+
+</section>
+
+{% endblock %}
