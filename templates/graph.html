@@ -87,8 +87,8 @@
             </div>
         </div>
 
-        <div class="info-panel">
-            <div class="info-list">
+        <div class="side-panel">
+            <div class="info-panel">
                 {% if station_info %}
                     {% for name, info in station_info.items() %}
                         {% set sid = name|replace(' ', '_')|replace('.', '')|replace('/', '_') %}
@@ -106,9 +106,8 @@
                 <h4 class="default-header">Station Information Panel</h4>
                 <div class="placeholder">Click a station to view details here.</div>
             </div>
-        </div>
-
-<div class="fare-panel">
+            
+            <div class="fare-panel">
             <h4 class="fare-main-header">Fare Calculator</h4>
             
             <div class="fare-content-box">
