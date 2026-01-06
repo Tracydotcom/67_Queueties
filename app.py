@@ -507,9 +507,26 @@ def get_fare():
 
 # Sorting Algos
 
-@app.route('/insertion_sort')
+@app.route('/insertion_sort', methods=['GET', 'POST'])
 def insert_sort():
-    return render_template('insertion_sort.html')
+    sorted_nums = None
+    original_nums = None
+
+    if request.method == 'POST':
+        nums_str = request.form.get('numbers', '').strip()
+        if nums_str:
+            tokens = nums_str.split()
+            original_nums = [int(x) for x in tokens]
+            arr = original_nums.copy()
+            insertion_sort_func(arr)
+            sorted_nums = arr
+
+    return render_template(
+        'insertion_sort.html',
+        sorted_nums=sorted_nums,
+        original_nums=original_nums
+    )
+
 
 @app.route('/merge_sort')
 def merge_sort():

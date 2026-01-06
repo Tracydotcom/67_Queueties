@@ -1,1 +1,184 @@
 {% extends "base.html" %}
+{% block title %}Insertion Sort{% endblock %}
+{% block content %}
+
+<section class="Intro-to-Insertion-Sort">
+    <div class="box">
+        <h1 style="font-family: 'Caveat', cursive; font-size: 2.5rem;">Insertion Sort Algorithm</h1>
+        <p style="text-align: left; font-size: 1rem;">Insertion sort arranges data one element at a time, 
+            taking it from the unsorted part of the array and moving it to its correct place in the sorted part.
+            It is mostly used when the list is small, mostly sorted, and when low memory
+            usage is a priority. It is much less efficient for larger lists unlike quick sort or merge sort.<br><br>
+
+            <strong>How it works:</strong> <br><br>
+            - The first element of the array is always assumed to be sorted. The rest are considered unsorted. <br>
+            - The second element will then be compared to the former and will be swapped if needed. <br>
+            - The next elements will be compared to all elements of the sorted part until the whole array is sorted.<br><br>
+
+            <strong>Time Complexity:</strong> O(n^2) in the average and worst cases, O(n) in the best case.<br>
+            <strong>Space Complexity:</strong> O(1) as it is an in-place sorting algorithm.<br><br>
+
+            You may copy and paste this sample list below to be able to visualize how the data is sorted:<br>
+            <strong><em>8 5 3 2 7 1 9 10 4 6</em></strong>
+        </p>
+    </div>
+</section>
+
+<section class="input-section">
+    <div class="box">
+        <h1 style="font-family: 'Caveat', cursive; font-size: 2.5rem;">Try it yourself!</h1>
+        <form id="sortForm" onsubmit="return false;">
+            <label>Enter numbers (space-separated):</label><br>
+            <input type="text" id="numbersInput" name="numbers" required placeholder="ex. 8 5 3 2 7 1 9 10 4 6">
+            <br><br>
+            <button id="startBtn">Sort It!</button>
+        </form>
+
+        <hr>
+        <div id="results">
+            <p><strong>Original:</strong> <span id="originalArr">...</span></p>
+            <p><strong>Sorted:</strong> <span id="sortedArr">...</span></p>
+        </div>
+    </div>
+</section>
+
+<section class="animation">
+    <div class="box">
+        <h1 style="font-family: 'Caveat', cursive; font-size: 2.5rem;">Visualization</h1>
+        <div id="vizControls" style="margin-bottom:12px">
+            <small>Input numbers and click "Sort It!" to see insertion sort in action.</small>
+        </div>
+        <div id="barsContainer"></div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
+function createBars(arr) {
+    const container = document.getElementById('barsContainer');
+    container.innerHTML = "";
+    const max = Math.max(...arr.map(n => Math.abs(n)), 1);
+    arr.forEach((val, i) => {
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.height = (Math.abs(val) / max * 220 + 20) + "px";
+        bar.dataset.index = i;
+        bar.innerHTML = `<span class="barLabel">${val}</span>`;
+        container.appendChild(bar);
+    });
+}
+
+async function animateInsertion(arr, delay) {
+    const container = document.getElementById("barsContainer");
+    const bars = () => [...container.children];
+    const original = [...arr];
+
+    for (let i = 1; i < arr.length; i++) {
+        const key = arr[i];
+        let j = i - 1;
+        bars()[i].classList.add("key");
+        await sleep(delay);
+        while (j >= 0 && arr[j] > key) {
+            const b = bars();
+            b[j].classList.add("comparing");
+            b[j + 1].classList.add("comparing");
+            await sleep(delay);
+            arr[j + 1] = arr[j];
+            b[j + 1].querySelector(".barLabel").textContent = arr[j + 1];
+            b[j + 1].style.height = b[j].style.height;
+            b[j].classList.remove("comparing");
+            b[j + 1].classList.remove("comparing");
+            j--;
+        }
+
+        arr[j + 1] = key;
+        const target = bars()[j + 1];
+        target.querySelector(".barLabel").textContent = key;
+        const max = Math.max(...original.map(n => Math.abs(n)), 1, ...arr.map(n => Math.abs(n)));
+        target.style.height = (Math.abs(key) / max * 220 + 20) + "px";
+        bars().forEach(b => b.classList.remove("key"));
+        await sleep(delay);
+    }
+}
+
+function parseInput(str) {
+    return str.trim()
+        .split(/\s+/)
+        .map(Number)
+        .filter(n => !isNaN(n));
+}
+
+document.getElementById("startBtn").addEventListener("click", async e => {
+    e.preventDefault();
+    const raw = document.getElementById("numbersInput").value;
+    const arr = parseInput(raw);
+    if (!arr.length) return alert("Please enter numbers separated by spaces.");
+    document.getElementById("originalArr").textContent = arr.join(", ");
+    createBars(arr);
+    const delay = 500;
+    const arrCopy = [...arr];
+    await animateInsertion(arrCopy, delay);
+    document.getElementById("sortedArr").textContent = arrCopy.join(", ");
+});
+</script>
+
+<style>
+    .box {
+        width: 1200px; 
+        padding: 20px; 
+        border: 2px solid rgb(172, 105, 105); 
+        margin: auto;
+        margin-top: 20px;
+        background-color: #ffeef7;
+        border-radius: 10px; 
+        box-shadow: 3px 3px 3px #aaaaaa; 
+    }
+
+    #barsContainer { 
+        display: flex; 
+        gap: 6px; 
+        align-items: end; 
+        justify-content: center; 
+        flex-wrap: wrap; 
+        padding: 16px; 
+        min-height:  260px; 
+        border-radius: 8px; 
+        background:#fff1f8; 
+    }
+
+    .bar { 
+        width: 40px; 
+        background: linear-gradient(180deg,#ff9fc3,#ff7aa9); 
+        display: flex; 
+        align-items: flex-end; 
+        justify-content: center; 
+        position: relative; 
+        border-radius: 4px; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08); 
+        transition:height 500ms ease; 
+    }
+
+    .barLabel { 
+        display: block; 
+        font-size:  12px; 
+        color:#3a2b2b; 
+        padding: 6px 2px; 
+    }
+
+    .bar.key { 
+        outline: 3px solid #ffd166; 
+        box-shadow:0 0 8px rgba(255,209,102,0.25); 
+    }
+
+    .bar.comparing { 
+        outline: 3px solid #6fa8dc; 
+    }
+
+    @media(max-width:700px){ .bar{ width:28px; } }
+
+</style>
+
+{% endblock %}
