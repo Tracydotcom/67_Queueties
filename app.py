@@ -8,6 +8,7 @@ from BSTmenu import BSTMenuManager
 from graph import build_graph, bfs_sp, calculate_fare, compute_travel_time
 from quick_sort import quicksort
 from bubble_sort import bubblesort
+from insertion_sort import insertion_sort as insertion_sort_func
 
 app = Flask(__name__)
 
